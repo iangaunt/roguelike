@@ -1,0 +1,23 @@
+@mixin flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+main {
+    @include flex;
+    height: 100vh;
+    overflow: hidden;
+    width: 100vw;
+
+    canvas {
+        @include flex;
+        flex-direction: column;
+    }
+}
