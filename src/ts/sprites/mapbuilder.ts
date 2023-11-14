@@ -1,25 +1,39 @@
-import { Sprite, SpriteSet } from "./spriteset";
+let map: Map<string, Sprite> = new Map<string, Sprite>()
+console.log(map);
 
 // Creates a new canvas object.
-let canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("main")!;
+let canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("map")!;
 let ctx = canvas.getContext("2d")!;
 ctx.imageSmoothingEnabled = false;
+
+export class Sprite {
+    file: string;
+    x: number;
+    y: number;
+
+    constructor(file: string, x: number, y: number) {
+        this.file = file;
+        this.x = x;
+        this.y = y;
+    }
+
+    getFile(): string {
+        return this.file;
+    }
+}
 
 export class MapBuilder {
     name: string;
     background: string = "rgb(0, 0, 0)";
-
     tiles: Array<string>;
     code: Map<string, string>;
-    sprites: SpriteSet;
 
     #files: Map<string, HTMLImageElement>;
 
-    constructor(name: string, tiles: Array<string>, code: Map<string, string>, sprites: SpriteSet) {
+    constructor(name: string, tiles: Array<string>, code: Map<string, string>) {
         this.name = name;
         this.tiles = tiles;
         this.code = code;
-        this.sprites = sprites;
 
         this.#files = new Map<string, HTMLImageElement>();
     }
@@ -28,42 +42,43 @@ export class MapBuilder {
         this.background = background;
     }
 
-    load() {
+    load(img: HTMLImageElement): void {
         ctx.fillStyle = this.background;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        const startingPositionX = canvas.width / 2 - this.tiles[0].length / 2 * 96;
-        const startingPositionY = canvas.height / 2 - this.tiles.length / 2 * 96;
+        const startingPositionX = canvas.width / 2 - this.tiles[0].length / 2 * 48;
+        const startingPositionY = canvas.height / 2 - this.tiles.length / 2 * 48;
 
         for (let row = 0; row < this.tiles.length; row++) {
             for (let col = 0; col < this.tiles[0].length; col++) {
                 const key = this.code.get(this.tiles[row].charAt(col))!;
-                let spr: Sprite = this.sprites.map.get(key)!;
-                let src = spr.file;
+                let spr = map.get(key)!;
 
-                let img = new Image();
-                
-                if (this.#files.has(src)) {
-                    img = this.#files.get(src)!;
-                } else {
-                    img.src = src;
-                    this.#files.set(src, img);
-                }
-
-                img.onload = (() => {
-                    drawImage(img!, startingPositionX + row * 16, startingPositionY + col * 16, spr.x, spr.y)
-                })
+                ctx.drawImage(
+                    img,
+                    spr.x, spr.y, 16, 16,
+                    startingPositionX + col * 48, startingPositionY + row * 48, 48, 48
+                );
             }
         }
     }
-}
 
+    addToSpriteSet(path: string, arr: string[]) {
+        const img = new Image();
+        img.addEventListener("load", (() => {
+            if (arr.length > (img.width / 16 * img.height / 16)) {
+                console.log("WARNING: " + path + " has an incorrectly sized path array!")
+            }
+            
+            for (let i = 0; i < img.width / 16 + 2; i++) {
+                for (let j = 0; j < img.height / 16 + 2; j++) {
+                    let spr = new Sprite(img.src, j * 16, i * 16);
+                    map.set(arr[i * img.width / 16 + j], spr);
+                }
+            }
+            this.load(img);
+        }));
 
-function drawImage(img: HTMLImageElement, imgX: number, imgY: number, canvasX: number, canvasY: number) {
-    ctx.drawImage(
-        img,
-        imgX, imgY, 16, 16,
-        canvasX, canvasY, 96, 96
-    );
+        img.src = path;
+    }
 }
-   

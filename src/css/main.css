@@ -1,5 +1,6 @@
 * {
   margin: 0;
+  overflow: hidden;
   padding: 0;
   text-align: center;
 }
@@ -9,12 +10,11 @@ main {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  overflow: hidden;
   width: 100vw;
 }
 main canvas {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
 }/*# sourceMappingURL=main.css.map */

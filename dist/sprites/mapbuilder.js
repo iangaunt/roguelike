@@ -4,55 +4,63 @@ var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
 };
-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-};
 var _MapBuilder_files;
+let map = new Map();
+console.log(map);
 // Creates a new canvas object.
-let canvas = document.getElementById("main");
+let canvas = document.getElementById("map");
 let ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
+export class Sprite {
+    constructor(file, x, y) {
+        this.file = file;
+        this.x = x;
+        this.y = y;
+    }
+    getFile() {
+        return this.file;
+    }
+}
 export class MapBuilder {
-    constructor(name, tiles, code, sprites) {
+    constructor(name, tiles, code) {
         this.background = "rgb(0, 0, 0)";
         _MapBuilder_files.set(this, void 0);
         this.name = name;
         this.tiles = tiles;
         this.code = code;
-        this.sprites = sprites;
         __classPrivateFieldSet(this, _MapBuilder_files, new Map(), "f");
     }
     setBackground(background) {
         this.background = background;
     }
-    load() {
+    load(img) {
         ctx.fillStyle = this.background;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        const startingPositionX = canvas.width / 2 - this.tiles[0].length / 2 * 96;
-        const startingPositionY = canvas.height / 2 - this.tiles.length / 2 * 96;
+        const startingPositionX = canvas.width / 2 - this.tiles[0].length / 2 * 48;
+        const startingPositionY = canvas.height / 2 - this.tiles.length / 2 * 48;
         for (let row = 0; row < this.tiles.length; row++) {
             for (let col = 0; col < this.tiles[0].length; col++) {
                 const key = this.code.get(this.tiles[row].charAt(col));
-                let spr = this.sprites.map.get(key);
-                let src = spr[0].toString();
-                let img = new Image();
-                if (__classPrivateFieldGet(this, _MapBuilder_files, "f").has(src)) {
-                    img = __classPrivateFieldGet(this, _MapBuilder_files, "f").get(src);
-                }
-                else {
-                    img.src = src;
-                    __classPrivateFieldGet(this, _MapBuilder_files, "f").set(src, img);
-                }
-                img.onload = (() => {
-                    drawImage(img, startingPositionX + row * 16, startingPositionY + col * 16, parseInt(spr[1].toString()), parseInt(spr[2].toString()));
-                });
+                let spr = map.get(key);
+                ctx.drawImage(img, spr.x, spr.y, 16, 16, startingPositionX + col * 48, startingPositionY + row * 48, 48, 48);
             }
         }
     }
+    addToSpriteSet(path, arr) {
+        const img = new Image();
+        img.addEventListener("load", (() => {
+            if (arr.length > (img.width / 16 * img.height / 16)) {
+                console.log("WARNING: " + path + " has an incorrectly sized path array!");
+            }
+            for (let i = 0; i < img.width / 16 + 2; i++) {
+                for (let j = 0; j < img.height / 16 + 2; j++) {
+                    let spr = new Sprite(img.src, j * 16, i * 16);
+                    map.set(arr[i * img.width / 16 + j], spr);
+                }
+            }
+            this.load(img);
+        }));
+        img.src = path;
+    }
 }
 _MapBuilder_files = new WeakMap();
-function drawImage(img, imgX, imgY, canvasX, canvasY) {
-    ctx.drawImage(img, imgX, imgY, 16, 16, canvasX, canvasY, 96, 96);
-}

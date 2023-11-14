@@ -1,5 +1,5 @@
 // Creates a new canvas object.
-let canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("main")!;
+let canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("player")!;
 let ctx = canvas.getContext("2d")!;
 ctx.imageSmoothingEnabled = false;
 
@@ -87,6 +87,7 @@ window.addEventListener("keydown", function(e) {
         }, 500);
     }   
 
+    // Reset the animation cycle when a new key is pressed.
     if (!keysDown.has(e.key.toLowerCase())) frameCount = 0;
     keysDown.add(e.key.toLowerCase());
 }, false);
@@ -132,7 +133,7 @@ function step() {
     frameCount++;
     updateSpeeds();
 
-    if (frameCount < 25) {
+    if (frameCount < 15) {
         window.requestAnimationFrame(step);
         return;
     }
@@ -161,7 +162,8 @@ function init() {
     }, 5);
     window.requestAnimationFrame(step);
 }
-  
+
+/** Initializes a new Player object to be rendered on the player layer. */
 export class Player {
     constructor() {
         img = new Image();
