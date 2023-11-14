@@ -1,16 +1,9 @@
-"use strict";
-// File location prefixes.
-let assets = "./assets";
-// Loads the appropriate image.
-const img = new Image();
-img.src = assets + "/lucas.png";
-img.onload = function () {
-    init();
-};
 // Creates a new canvas object.
 let canvas = document.getElementById("main");
 let ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
+// A new Image for storing the spritemap of the player.
+let img;
 // Defies the scale, width, and height of the sprite element.
 const scale = 3;
 const width = 32;
@@ -111,11 +104,15 @@ function updateSpeeds() {
         yv = 0;
     if (y + yv > canvas.height - scaledHeight)
         yv = 0;
+    if ((keysDown.has("w") || keysDown.has("s")) && (keysDown.has("a") || keysDown.has("d"))) {
+        xv /= Math.sqrt(2);
+        yv /= Math.sqrt(2);
+    }
 }
 function step() {
     frameCount++;
     updateSpeeds();
-    if (frameCount < 15) {
+    if (frameCount < 25) {
         window.requestAnimationFrame(step);
         return;
     }
@@ -138,7 +135,18 @@ function init() {
         drawFrame(cycleLoop[currentLoopIndex], row, x, y);
         x += xv;
         y += yv;
-        console.log(jumpV);
     }, 5);
     window.requestAnimationFrame(step);
+}
+export class Player {
+    constructor() {
+        img = new Image();
+        img.src = "./assets/lucas.png";
+        img.onload = function () {
+            init();
+        };
+    }
+    getHeight() {
+        return height;
+    }
 }
