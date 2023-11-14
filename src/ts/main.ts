@@ -42,6 +42,8 @@ island_code.set("p", "pond_top_left");
 island_code.set("q", "pond_top_right");
 island_code.set("8", "pond_top");
 
+player.setCollisionMap(island_tiles, island_code);
+
 let island: MapBuilder = new MapBuilder("island", island_tiles, island_code);
 island.setBackground("rgb(120, 192, 248)");
 island.addToSpriteSet("./assets/spritemaps/island.png", [

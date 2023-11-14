@@ -14,6 +14,9 @@ const scaledHeight = scale * height;
 // Defines where the sprite is at any given point.
 let x = canvas.width / 2 - scaledWidth / 2;
 let y = canvas.height / 2 - scaledHeight / 2;
+// Indicates the current collision map for the player.
+let collisionMap;
+let allowedTiles = ["grass", "white_flowers", "colored_flowers"];
 /**
  * Draws the specified frame of the animation at the position
  * canvasX, canvasY, cut from the spritesheet of width x height at
@@ -129,6 +132,32 @@ function step() {
     }
     window.requestAnimationFrame(step);
 }
+function checkCollisions() {
+    for (let i = 0; i < collisionMap.length; i++) {
+        for (let j = 0; j < collisionMap[i].length; j++) {
+            if (collisionMap[i].charAt(j) == "1") {
+                const startingPositionX = canvas.width / 2 - collisionMap[0].length / 2 * 48;
+                const startingPositionY = canvas.height / 2 - collisionMap.length / 2 * 48;
+                let xDistance = Math.floor((x + width / 4) - (j * 48 + 24)) - startingPositionX + 48;
+                let yDistance = Math.floor((y + height / 4) - (i * 48 + 24)) - startingPositionY + 48;
+                let combinedHalfWidth = Math.floor(width / 4 + 48 / 2);
+                let combinedHalfHeight = Math.floor(height / 4 + 48 / 2);
+                if (Math.abs(xDistance) < combinedHalfWidth) {
+                    if (Math.abs(yDistance) < combinedHalfHeight) {
+                        let xOverlap = combinedHalfWidth - Math.abs(xDistance);
+                        let yOverlap = combinedHalfHeight - Math.abs(yDistance);
+                        if (xOverlap >= yOverlap) {
+                            y += yDistance > 0 ? yOverlap : -yOverlap;
+                        }
+                        else {
+                            x += xDistance > 0 ? xOverlap : -xOverlap;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 function init() {
     setInterval(function () {
         updateSpeeds();
@@ -136,6 +165,7 @@ function init() {
         drawFrame(cycleLoop[currentLoopIndex], row, x, y);
         x += xv;
         y += yv;
+        checkCollisions();
     }, 5);
     window.requestAnimationFrame(step);
 }
@@ -150,5 +180,22 @@ export class Player {
     }
     getHeight() {
         return height;
+    }
+    setCollisionMap(arr, code) {
+        let compressedMap = new Array();
+        for (let i = 0; i < arr.length; i++) {
+            let row = "";
+            for (let j = 0; j < arr[i].length; j++) {
+                if (allowedTiles.indexOf(code.get(arr[i].charAt(j))) == -1) {
+                    row += "1";
+                }
+                else {
+                    row += "0";
+                }
+            }
+            compressedMap.push(row);
+        }
+        collisionMap = compressedMap;
+        console.log(collisionMap);
     }
 }
