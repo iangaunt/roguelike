@@ -137,7 +137,7 @@ function step() {
     frameCount++;
     updateSpeeds();
 
-    if (frameCount < 15) {
+    if (frameCount < 10) {
         window.requestAnimationFrame(step);
         return;
     }
@@ -230,6 +230,5 @@ export class Player {
         }
 
         collisionMap = compressedMap;
-        console.log(collisionMap);
     }
 }

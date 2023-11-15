@@ -1,27 +1,31 @@
 let map: Map<string, Sprite> = new Map<string, Sprite>()
-console.log(map);
 
-// Creates a new canvas object.
-let canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById("map")!;
-let ctx = canvas.getContext("2d")!;
-ctx.imageSmoothingEnabled = false;
-
+/** A "sprite" value containing a link to an image and its x-y coordinates of the rip. */
 export class Sprite {
-    file: string;
-    x: number;
-    y: number;
+    #file: string;
+    #x: number;
+    #y: number;
 
     constructor(file: string, x: number, y: number) {
-        this.file = file;
-        this.x = x;
-        this.y = y;
+        this.#file = file;
+        this.#x = x;
+        this.#y = y;
     }
 
     getFile(): string {
-        return this.file;
+        return this.#file;
+    }
+
+    getX(): number {
+        return this.#x;
+    }
+
+    getY(): number {
+        return this.#y;
     }
 }
 
+/** A class for constructing maps based on tile and collision maps. */
 export class MapBuilder {
     name: string;
     background: string = "rgb(0, 0, 0)";
@@ -42,7 +46,15 @@ export class MapBuilder {
         this.background = background;
     }
 
-    load(img: HTMLImageElement): void {
+    setTiles(tiles: Array<string>) {
+        this.tiles = tiles;
+    }
+
+    load(layer: string, img: HTMLImageElement): void {
+        let canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById(layer)!;
+        let ctx = canvas.getContext("2d")!;
+        ctx.imageSmoothingEnabled = false;
+
         ctx.fillStyle = this.background;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -51,19 +63,20 @@ export class MapBuilder {
 
         for (let row = 0; row < this.tiles.length; row++) {
             for (let col = 0; col < this.tiles[0].length; col++) {
+                if (this.tiles[row].charAt(col) == " ") continue;
                 const key = this.code.get(this.tiles[row].charAt(col))!;
                 let spr = map.get(key)!;
 
                 ctx.drawImage(
                     img,
-                    spr.x, spr.y, 16, 16,
+                    spr.getX(), spr.getY(), 16, 16,
                     startingPositionX + col * 48, startingPositionY + row * 48, 48, 48
                 );
             }
         }
     }
 
-    addToSpriteSet(path: string, arr: string[]) {
+    build(layer: string, path: string, arr: string[]) {
         const img = new Image();
         img.addEventListener("load", (() => {
             if (arr.length > (img.width / 16 * img.height / 16)) {
@@ -76,7 +89,7 @@ export class MapBuilder {
                     map.set(arr[i * img.width / 16 + j], spr);
                 }
             }
-            this.load(img);
+            this.load(layer, img);
         }));
 
         img.src = path;
