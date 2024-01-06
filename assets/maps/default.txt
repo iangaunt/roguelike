@@ -1,0 +1,11 @@
+water water water water water water water island_top_left island_top island_top island_top island_top_right water water 
+water water island_top_left island_top island_top island_top island_top pond_bottom_right grass grass grass island_right water water 
+water water island_left grass white_flowers grass colored_flowers grass grass white_flowers colored_flowers island_right water water 
+water water island_left grass grass grass colored_flowers grass grass grass grass island_right water water 
+water water island_left colored_flowers grass white_flowers grass grass grass grass grass island_right water water 
+water water island_left grass colored_flowers grass grass grass white_flowers grass grass island_right water water 
+water water island_left grass grass grass grass pond_top_left pond_top pond_top_right colored_flowers island_right water water 
+water water island_left grass white_flowers grass grass island_right water island_left grass island_right water water 
+water water island_left grass colored_flowers grass grass island_right water island_left grass island_right water water 
+water water island_bottom_left island_bottom island_bottom island_bottom island_bottom island_bottom_right water island_bottom_left island_bottom island_bottom_right water water 
+water water water water water water water water water water water water water water 

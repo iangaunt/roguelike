@@ -7,10 +7,10 @@ const assets: string = "./assets";
 const spritemaps: string = assets + "/spritemaps";
 
 // Creates a new player sprite.
-let player: Player = new Player();
+let player: Player = new Player(32, 32, 3);
 
 let island_tiles = [
-    "@@@@@@@<^^^>@@@",
+    "@@@@@@@<^^^>@@",
     "@@<^^^^dggg]@@",
     "@@[gwgcggwc]@@",
     "@@[gggcgggg]@@",
@@ -58,7 +58,7 @@ island_code.set("8", "pond_top");
 island_code.set("s", "bush");
 
 player.setCollisionMap(island_tiles, island_code);
-let islandImg = "./assets/spritemaps/island.png";
+let islandImg = spritemaps + "/island.png";
 let spriteArr = [
     "island_top_left", "island_top", "island_top_right", "pond_top_left", "pond_top", "pond_top_right", 
     "island_left", "island_middle", "island_right", "pond_left", "water", "pond_right", 
@@ -73,3 +73,12 @@ island.build("map", islandImg, spriteArr);
 island = new MapBuilder("island", island_deco, island_code);
 island.setBackground("transparent");
 island.build("deco", islandImg, spriteArr);
+
+let s = "";
+for (let i = 0; i < island_tiles.length; i++) {
+    for (let j = 0; j < island_tiles[i].length; j++) {
+        s += island_code.get(island_tiles[i].charAt(j)) + " ";
+    }
+    s += "\n"
+}
+console.log(s);
