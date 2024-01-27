@@ -17,6 +17,7 @@ function createWindow() {
 app.whenReady().then(() => {
     createWindow()
 
+    // Specific behavior for MacBooks.
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow()

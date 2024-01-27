@@ -1,6 +1,6 @@
 // Global variables among game scripts.
-import { MapBuilder } from "./sprites/mapbuilder.js";
-import { Player } from "./sprites/player.js";
+import { MapBuilder } from "./sprites/MapBuilder.js";
+import { Player } from "./sprites/Player.js";
 /** The header file path for image files. */
 const assets = "./assets";
 const spritemaps = assets + "/spritemaps";
