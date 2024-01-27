@@ -8,7 +8,7 @@ function createWindow() {
         height: 800,
         useContentSize: true,
         resizeable: false
-    })
+    });
 
     window.loadFile("index.html")
 }
@@ -17,7 +17,6 @@ function createWindow() {
 app.whenReady().then(() => {
     createWindow()
 
-    // Specific behavior for MacBooks.
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow()

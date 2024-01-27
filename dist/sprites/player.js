@@ -15,7 +15,7 @@ const scaledHeight = scale * height;
 let x = canvas.width / 2 - scaledWidth / 2;
 let y = canvas.height / 2 - scaledHeight / 2;
 // Indicates the current collision map for the player.
-let collisionMap;
+let collisionMap = [];
 let allowedTiles = ["grass", "white_flowers", "colored_flowers"];
 /**
  * Draws the specified frame of the animation at the position

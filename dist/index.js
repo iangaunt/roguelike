@@ -7,7 +7,10 @@ function createWindow() {
         width: 1200,
         height: 800,
         useContentSize: true,
-        resizeable: false
+        resizeable: false,
+        webPreferences: {
+            nodeIntegration: true
+        }
     });
     window.loadFile("index.html");
 }

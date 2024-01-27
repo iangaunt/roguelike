@@ -1,6 +1,7 @@
 // Global variables among game scripts.
 import { MapBuilder } from "./sprites/MapBuilder.js";
 import { Player } from "./sprites/Player.js";
+import { TmapReader } from "./sprites/TmapReader.js";
 
 /** The header file path for image files. */
 const assets: string = "./assets";
@@ -9,6 +10,10 @@ const spritemaps: string = assets + "/spritemaps";
 // Creates a new player sprite.
 let player: Player = new Player();
 
+let tmap: TmapReader = new TmapReader();
+tmap.readFile("./maps/island.tmap");
+
+/*
 let island_tiles = [
     "@@@@@@@<^^^>@@@",
     "@@<^^^^dggg]@@",
@@ -73,3 +78,4 @@ island.build("map", islandImg, spriteArr);
 island = new MapBuilder("island", island_deco, island_code);
 island.setBackground("transparent");
 island.build("deco", islandImg, spriteArr);
+*/
