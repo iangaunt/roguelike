@@ -1,5 +1,6 @@
 "use strict";
 const { app, BrowserWindow } = require("electron");
+const fs = require("node:fs");
 const path = require("node:path");
 // Loads the Electron window with the index.html file.
 function createWindow() {
@@ -9,6 +10,7 @@ function createWindow() {
         useContentSize: true,
         resizeable: false,
         webPreferences: {
+            contextIsolation: false,
             nodeIntegration: true
         }
     });
@@ -17,7 +19,6 @@ function createWindow() {
 // Runs createWindow when the app is ready to launch.
 app.whenReady().then(() => {
     createWindow();
-    // Specific behavior for MacBooks.
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow();

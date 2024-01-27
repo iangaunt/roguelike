@@ -1,0 +1,50 @@
+#background: rgb(120, 192, 248);
+
+#key: {
+    "g": "grass"
+    "w": "white_flowers"
+    "c": "colored_flowers"
+    "<": "island_top_left"
+    "^": "island_top"
+    ">": "island_top_right"
+    "[": "island_left"
+    "*": "island_middle"
+    "]": "island_right"
+    "{": "island_bottom_left"
+    ".": "island_bottom"
+    "}": "island_bottom_right"
+    "@": "water"
+    "p": "pond_top_left"
+    "q": "pond_top_right"
+    "d": "pond_bottom_right"
+    "8": "pond_top"
+    "s": "bush"
+};
+
+#{layer=map}: {
+    "@ @ @ @ @ @ @ < ^ ^ ^ > @ @"
+    "@ @ < ^ ^ ^ ^ d g g g ] @ @"
+    "@ @ [ g w g c g g w c ] @ @"
+    "@ @ [ g g g c g g g g ] @ @"
+    "@ @ [ c g w g g g g g ] @ @"
+    "@ @ [ g c g g g w g g ] @ @"
+    "@ @ [ g g g g p 8 q c ] @ @"
+    "@ @ [ g w g g ] @ [ g ] @ @"
+    "@ @ [ g c g g ] @ [ g ] @ @"
+    "@ @ { . . . . } @ { . } @ @"
+    "@ @ @ @ @ @ @ @ @ @ @ @ @ @"
+};
+
+#{layer=deco}: {
+    "                           "
+    "                  s        "
+    "      s             s      "
+    "                           "
+    "              s            "
+    "                           "
+    "                           "
+    "      s                    "
+    "                           "
+    "                           "
+    "                           "
+};

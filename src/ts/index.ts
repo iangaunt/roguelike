@@ -1,4 +1,6 @@
 const { app, BrowserWindow } = require("electron")
+
+const fs = require("node:fs");
 const path = require("node:path")
 
 // Loads the Electron window with the index.html file.
@@ -7,7 +9,12 @@ function createWindow() {
         width: 1200,
         height: 800,
         useContentSize: true,
-        resizeable: false
+        resizeable: false,
+        
+        webPreferences: {
+            contextIsolation: false,
+            nodeIntegration: true
+        }
     });
 
     window.loadFile("index.html")
