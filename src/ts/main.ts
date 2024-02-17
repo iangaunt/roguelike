@@ -1,5 +1,6 @@
 // Global variables among game scripts.
 import { Player } from "./sprites/Player.js";
+import { TileKey } from "./sprites/TileKey.js";
 import { TileMap, TmapReader } from "./sprites/TmapReader.js";
 
 /** The header file path for image files. */
@@ -13,63 +14,18 @@ let player: Player = new Player();
 let tmap: TmapReader = new TmapReader();
 let island: TileMap = tmap.readFile(maps + "/island.tmap");
 
-/*
-let island_tiles = [
-    "@@@@@@@<^^^>@@@",
-    "@@<^^^^dggg]@@",
-    "@@[gwgcggwc]@@",
-    "@@[gggcgggg]@@",
-    "@@[cgwggggg]@@",
-    "@@[gcgggwgg]@@",
-    "@@[ggggp8qc]@@",
-    "@@[gwgg]@[g]@@",
-    "@@[gcgg]@[g]@@",
-    "@@{....}@{.}@@",
-    "@@@@@@@@@@@@@@"
-]
-
-let island_deco = [
-    "              ",
-    "              ",
-    "     s  s     ",
-    "         s    ",
-    "              ",
-    "   s   s      ",
-    "              ",
-    "              ",
-    "    s         ",
-    "              ",
-    "              "
-]
-
-let island_code = new Map<string, string>();
-island_code.set("g", "grass");
-island_code.set("w", "white_flowers");
-island_code.set("c", "colored_flowers");
-island_code.set("<", "island_top_left");
-island_code.set("^", "island_top");
-island_code.set(">", "island_top_right");
-island_code.set("[", "island_left");
-island_code.set("*", "island_middle");
-island_code.set("]", "island_right");
-island_code.set("{", "island_bottom_left");
-island_code.set(".", "island_bottom");
-island_code.set("}", "island_bottom_right");
-island_code.set("@", "water");
-island_code.set("p", "pond_top_left");
-island_code.set("q", "pond_top_right");
-island_code.set("d", "pond_bottom_right");
-island_code.set("8", "pond_top");
-island_code.set("s", "bush");
-
-player.setCollisionMap(island_tiles, island_code);
-let islandImg = "./assets/spritemaps/island.png";
-let spriteArr = [
+let islandNames = [
     "island_top_left", "island_top", "island_top_right", "pond_top_left", "pond_top", "pond_top_right", 
     "island_left", "island_middle", "island_right", "pond_left", "water", "pond_right", 
     "island_bottom_left", "island_bottom", "island_bottom_right", "pond_bottom_left", "pond_bottom", "pond_bottom_right",
     "bush", "colored_flowers", "white_flowers", "grass", "shrub"
 ];
+
+let islandKey: TileKey = new TileKey(spritemaps + "/island.png", islandNames)
+tmap.load(island, islandKey);
+
+/*
+player.setCollisionMap(island_tiles, island_code);
 
 let island: MapBuilder = new MapBuilder("island", island_tiles, island_code);
 island.setBackground("rgb(120, 192, 248)");

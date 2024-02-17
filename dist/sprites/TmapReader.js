@@ -1,52 +1,25 @@
 const fs = window.require("fs");
 export class TileMap {
-    constructor(background, layer, map) {
+    constructor(background, key, map) {
         this.background = background;
-        this.layer = layer;
-        this.map = map;
-    }
-    load() {
-        const canvas = document.getElementById(this.layer);
-        const ctx = canvas.getContext("2d");
-        ctx.imageSmoothingEnabled = false;
-        ctx.fillStyle = this.background;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        const startingPositionX = canvas.width / 2 - this.map.width / 2;
-        const startingPositionY = canvas.height / 2 - this.map.height / 2;
-        ctx.drawImage(this.map, startingPositionX, startingPositionY);
-    }
-    getBackground() {
-        return this.background;
-    }
-    setBackground(background) {
-        this.background = background;
-    }
-    getLayer() {
-        return this.layer;
-    }
-    setLayer(layer) {
-        this.layer = layer;
-    }
-    getMap() {
-        return this.map;
-    }
-    setMap(map) {
+        this.key = key;
         this.map = map;
     }
 }
 export class TmapReader {
-    readFile(file) {
-        const contents = fs.readFileSync(file, "utf-8");
-        let background = "";
-        let layer = "";
-        let map = new Image();
-        let whitespace = [" ", "\t", "\n"];
+    /**
+     * Scrapes the background color of a .tmap file.
+     *
+     * @param contents - The string of contents read in from a .tmap file.
+     * @returns - The background color of the map.
+     */
+    scrapeBackground(contents) {
         if (contents.indexOf("#background") > -1) {
             const ind = contents.indexOf("#background") + "#background".length - 1;
             let color = "";
             if (contents.charAt(ind + 1) != ":") {
                 console.error("No colon found for #background tag!");
-                return new TileMap(background, layer, map);
+                return "";
             }
             let readInd = ind + 2;
             while (contents.charAt(readInd) != ";") {
@@ -54,21 +27,32 @@ export class TmapReader {
                 readInd++;
             }
             color.replace("\"", "");
-            background = color;
+            return color;
         }
+        return "";
+    }
+    /**
+     * Fetches the key decoder from a .tmap file. Keys are used to
+     * encode singular characters into their tile names for convenience
+     * in map creation.
+     *
+     * @param contents - The string of contents read in from a .tmap file.
+     * @returns - A map of characters, connected to their respective tile names.
+     */
+    scrapeKey(contents) {
+        let whitespace = [" ", "\t", "\n"];
         if (contents.indexOf("#key") > -1) {
             const ind = contents.indexOf("#key") + "#key".length - 1;
             if (contents.charAt(ind + 1) != ":") {
                 console.error("No colon found for #key tag!");
-                return new TileMap(background, layer, map);
+                return new Map();
             }
             let substr = contents.substring(ind + 1);
             let readInd = 2;
             while (substr.charAt(readInd) != "{") {
-                console.log(substr.charAt(readInd));
                 if (whitespace.indexOf(substr.charAt(readInd)) == -1) {
                     console.error("Missing '{' symbol for #key tag!");
-                    return new TileMap(background, layer, map);
+                    return new Map();
                 }
                 readInd++;
             }
@@ -79,7 +63,6 @@ export class TmapReader {
             let currentRead = "sprite";
             let tileKey = new Map();
             while (substr.charAt(readInd) != "}") {
-                console.log(substr.charAt(readInd));
                 if (substr.charAt(readInd) == "\"") {
                     isReading = !isReading;
                     if (isReading) {
@@ -104,13 +87,104 @@ export class TmapReader {
                 }
                 readInd++;
             }
+            tileKey.set(key, sprite);
             tileKey.delete("");
-            console.log(tileKey);
+            return tileKey;
         }
         else {
             console.error("No proper #key tag found!");
-            return new TileMap(background, layer, map);
+            return new Map();
         }
-        return new TileMap(background, layer, map);
+    }
+    /**
+     * Constructs a map of each grid of tiles linked to the layer they
+     * are supposed to appear on in the hierarchy.
+     *
+     * @param contents - The string of contents read in from a .tmap file.
+     * @returns - The encoded grid of each layer of the map.
+     */
+    scrapeMaps(contents) {
+        let maps = new Map();
+        while (contents.indexOf("#{layer=") > -1) {
+            contents = contents.substring(contents.indexOf("#{layer="));
+            let layerName = "";
+            let readInd = 0;
+            while (contents.charAt(readInd) != "=")
+                readInd++;
+            readInd++;
+            while (contents.charAt(readInd) != "}") {
+                layerName += contents.charAt(readInd);
+                readInd++;
+            }
+            contents = contents.substring(readInd);
+            readInd = 0;
+            if (contents.charAt(readInd + 1) != ":") {
+                console.error("Missing : in definition of map layer!");
+                return new Map();
+            }
+            readInd++;
+            readInd = contents.indexOf("{");
+            let layerRows = new Array();
+            let row = "";
+            let reading = false;
+            let toggleReader = false;
+            while (contents.charAt(readInd) != "}") {
+                if (contents.charAt(readInd) == "\"") {
+                    reading = !reading;
+                    if (!reading) {
+                        layerRows.push(row);
+                        row = "";
+                        toggleReader = true;
+                    }
+                }
+                else {
+                    if (reading && toggleReader)
+                        row += contents.charAt(readInd);
+                    toggleReader = !toggleReader;
+                }
+                readInd++;
+            }
+            maps.set(layerName, layerRows);
+        }
+        return maps;
+    }
+    /**
+     * Reads a .tmap file and constructs a new tilemap.
+     *
+     * @param file - The .tmap file to read from.
+     * @returns - The tilemap of the .tmap file.
+     */
+    readFile(file) {
+        const contents = fs.readFileSync(file, "utf-8");
+        let background = this.scrapeBackground(contents);
+        let key = this.scrapeKey(contents);
+        let map = this.scrapeMaps(contents);
+        return new TileMap(background, key, map);
+    }
+    load(map, key) {
+        console.log("map");
+        let arr = Array.from(map.map.keys());
+        for (let i = 0; i < arr.length; i++) {
+            let layer = arr[i];
+            let canvas = document.getElementById(layer);
+            let ctx = canvas.getContext("2d");
+            ctx.imageSmoothingEnabled = false;
+            if (layer == "map") {
+                ctx.fillStyle = map.background;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            let grid = map.map.get(layer);
+            const startingPositionX = canvas.width / 2 - grid[0].length / 2 * 48;
+            const startingPositionY = canvas.height / 2 - grid.length / 2 * 48;
+            for (let row = 0; row < grid.length; row++) {
+                for (let col = 0; col < grid[0].length; col++) {
+                    if (grid[row].charAt(col) == " ")
+                        continue;
+                    const k = map.key.get(grid[row].charAt(col));
+                    let spr = key.key.get(k);
+                    ctx.drawImage(spr.image, spr.x, spr.y, 16, 16, startingPositionX + col * 48, startingPositionY + row * 48, 48, 48);
+                }
+            }
+        }
     }
 }

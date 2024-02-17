@@ -12,7 +12,7 @@
     "]": "island_right"
     "{": "island_bottom_left"
     ".": "island_bottom"
-    "}": "island_bottom_right"
+    "k": "island_bottom_right"
     "@": "water"
     "p": "pond_top_left"
     "q": "pond_top_right"
@@ -31,7 +31,7 @@
     "@ @ [ g g g g p 8 q c ] @ @"
     "@ @ [ g w g g ] @ [ g ] @ @"
     "@ @ [ g c g g ] @ [ g ] @ @"
-    "@ @ { . . . . } @ { . } @ @"
+    "@ @ { . . . . k @ { . k @ @"
     "@ @ @ @ @ @ @ @ @ @ @ @ @ @"
 };
 
