@@ -52,7 +52,7 @@ const scaledHeight = scale * height;
 let x = canvas.width / 2 - scaledWidth / 2;
 let y = canvas.height / 2 - scaledHeight / 2;
 // Indicates the current collision map for the player.
-let collisionMap;
+let collisionMap = [];
 let allowedTiles = ["grass", "white_flowers", "colored_flowers"];
 // A new Image for storing the spritemap of the player.
 let img;
