@@ -1,4 +1,4 @@
-class Tile {
+export class Tile {
     constructor(image, x, y) {
         this.image = image;
         this.x = x;
@@ -20,6 +20,7 @@ export class TileKey {
                     this.key.set(names[i * img.width / 16 + j], spr);
                 }
             }
+            console.log(this.key.size);
         }));
         img.src = path;
     }

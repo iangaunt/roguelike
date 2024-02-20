@@ -1,4 +1,4 @@
-class Tile {
+export class Tile {
     image: HTMLImageElement;
     x: number;
     y: number;
@@ -29,6 +29,8 @@ export class TileKey {
                     this.key.set(names[i * img.width / 16 + j], spr);
                 }
             }
+
+            console.log(this.key.size);
         }));
 
         img.src = path;

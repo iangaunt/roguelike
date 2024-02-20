@@ -161,8 +161,7 @@ export class TmapReader {
         let map = this.scrapeMaps(contents);
         return new TileMap(background, key, map);
     }
-    load(map, key) {
-        console.log("map");
+    load(map, key, tileKey) {
         let arr = Array.from(map.map.keys());
         for (let i = 0; i < arr.length; i++) {
             let layer = arr[i];
@@ -180,8 +179,8 @@ export class TmapReader {
                 for (let col = 0; col < grid[0].length; col++) {
                     if (grid[row].charAt(col) == " ")
                         continue;
-                    const k = map.key.get(grid[row].charAt(col));
-                    let spr = key.key.get(k);
+                    const k = grid[row].charAt(col);
+                    const spr = key.key.get(map.key.get(k));
                     ctx.drawImage(spr.image, spr.x, spr.y, 16, 16, startingPositionX + col * 48, startingPositionY + row * 48, 48, 48);
                 }
             }

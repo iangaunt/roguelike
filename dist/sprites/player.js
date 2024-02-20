@@ -116,7 +116,7 @@ function updateSpeeds() {
 function step() {
     frameCount++;
     updateSpeeds();
-    if (frameCount < 10) {
+    if (frameCount < 15) {
         window.requestAnimationFrame(step);
         return;
     }

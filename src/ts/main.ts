@@ -22,16 +22,6 @@ let islandNames = [
 ];
 
 let islandKey: TileKey = new TileKey(spritemaps + "/island.png", islandNames)
-tmap.load(island, islandKey);
-
-/*
-player.setCollisionMap(island_tiles, island_code);
-
-let island: MapBuilder = new MapBuilder("island", island_tiles, island_code);
-island.setBackground("rgb(120, 192, 248)");
-island.build("map", islandImg, spriteArr);
-
-island = new MapBuilder("island", island_deco, island_code);
-island.setBackground("transparent");
-island.build("deco", islandImg, spriteArr);
-*/
+setTimeout(() => {
+    tmap.load(island, islandKey, islandKey.key);
+}, 2000);
