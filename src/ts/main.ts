@@ -9,7 +9,7 @@ const spritemaps: string = assets + "/spritemaps";
 const maps: string = assets + "/maps"
 
 // Creates a new player sprite.
-let player: Player = new Player();
+let player: Player = new Player(32, 32, 3);
 
 let tmap: TmapReader = new TmapReader();
 let island: TileMap = tmap.readFile(maps + "/island.tmap");

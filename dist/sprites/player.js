@@ -2,13 +2,50 @@
 let canvas = document.getElementById("player");
 let ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
-// A new Image for storing the spritemap of the player.
-let img;
+/** Initializes a new Player object to be rendered on the player layer. */
+export class Player {
+    /** Creates a new player from the specified image. */
+    constructor(w, h, sc) {
+        img = new Image();
+        img.src = "./assets/lucas.png";
+        width = w;
+        height = h;
+        scale = sc;
+        img.onload = function () {
+            init();
+        };
+    }
+    /**
+     * Sets the collision map of the player. This prevents the player from entering
+     * a specific area of the map by converting the present tilemap to ones and zeroes,
+     * where players are locked from entering "one" tiles.
+     *
+     * @param arr - The array to convert to a collision map.
+     * @param code - The sprite code.
+     */
+    setCollisionMap(arr, code) {
+        let compressedMap = new Array();
+        for (let i = 0; i < arr.length; i++) {
+            let row = "";
+            for (let j = 0; j < arr[i].length; j++) {
+                if (allowedTiles.indexOf(code.get(arr[i].charAt(j))) == -1) {
+                    row += "1";
+                }
+                else {
+                    row += "0";
+                }
+            }
+            compressedMap.push(row);
+        }
+        collisionMap = compressedMap;
+    }
+}
 // Defies the scale, width, and height of the sprite element.
-const scale = 3;
-const width = 32;
-const height = 32;
-// Scaled-up values of width and height.
+// These values are defined when the Player object is initialized.
+let scale = 3;
+let width = 32;
+let height = 32;
+// scaled-up values of width and height.
 const scaledWidth = scale * width;
 const scaledHeight = scale * height;
 // Defines where the sprite is at any given point.
@@ -17,6 +54,8 @@ let y = canvas.height / 2 - scaledHeight / 2;
 // Indicates the current collision map for the player.
 let collisionMap = [];
 let allowedTiles = ["grass", "white_flowers", "colored_flowers"];
+// A new Image for storing the spritemap of the player.
+let img;
 /**
  * Draws the specified frame of the animation at the position
  * canvasX, canvasY, cut from the spritesheet of width x height at
@@ -34,19 +73,19 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
     // Positions the frame at the specified x and y value.
     canvasX, canvasY, scaledWidth, scaledHeight);
 }
-const cycleLoop = [0, 1, 2, 3]; // The loop of indexing frames to move through to animate the player.
-let currentLoopIndex = 0; // The current position in the animation.
+let currentFrame = 0; // The current position in the animation.
 let row = 0; // The row of the sprite map to pull frame. Determines the direction.
 let offset = 0; // Value to shift the top left corner of the sprite map left or right.
 let frameCount = 0; // The counter for animating the player sprite.
-let keysDown = new Set(); // Set to store the current keys being pressed.
+// Set to store the current keys being pressed.
+let keysDown = new Set();
 // Matches the input value to the row that should be displayed from the spritemap.
 const movementKeyRows = new Map([
     ["w", 1], ["a", 2], ["s", 0], ["d", 3]
 ]);
 // Values for checking if the player is jumping / moving during a jump.
 let isJumping = false;
-let jumpV = 0;
+let jumpVelocity = 0;
 // Matches the prompted keys to their respective functionality.
 window.addEventListener("keydown", function (e) {
     if (movementKeyRows.has(e.key.toLowerCase())) {
@@ -60,15 +99,15 @@ window.addEventListener("keydown", function (e) {
     // Adds a jump power to the sprite.
     if (e.key.toLowerCase() == " " && !isJumping) {
         isJumping = true;
-        jumpV = -3;
+        jumpVelocity = -3;
         for (let i = 0; i <= 4; i++) {
             setTimeout(() => {
-                jumpV++;
+                jumpVelocity++;
             }, i * 100);
         }
         setTimeout(() => {
             isJumping = false;
-            jumpV = 0;
+            jumpVelocity = 0;
         }, 500);
     }
     // Reset the animation cycle when a new key is pressed.
@@ -83,34 +122,34 @@ window.addEventListener("keyup", function (e) {
         offset = 0;
     }
     keysDown.delete(e.key.toLowerCase());
-    currentLoopIndex = 0;
+    currentFrame = 0;
 }, false);
-let xv = 0;
-let yv = 0;
+let xVelocity = 0;
+let yVelocity = 0;
 let movementSpeed = 1;
 function updateSpeeds() {
-    xv = 0;
-    yv = 0;
-    yv += jumpV;
+    xVelocity = 0;
+    yVelocity = 0;
+    yVelocity += jumpVelocity;
     if (keysDown.has("w"))
-        yv -= movementSpeed;
+        yVelocity -= movementSpeed;
     if (keysDown.has("s"))
-        yv += movementSpeed;
+        yVelocity += movementSpeed;
     if (keysDown.has("a"))
-        xv -= movementSpeed;
+        xVelocity -= movementSpeed;
     if (keysDown.has("d"))
-        xv += movementSpeed;
-    if (x + xv < 0)
-        xv = 0;
-    if (x + xv > canvas.width - scaledWidth)
-        xv = 0;
-    if (y + yv < 0)
-        yv = 0;
-    if (y + yv > canvas.height - scaledHeight)
-        yv = 0;
+        xVelocity += movementSpeed;
+    if (x + xVelocity < 0)
+        xVelocity = 0;
+    if (x + xVelocity > canvas.width - scaledWidth)
+        xVelocity = 0;
+    if (y + yVelocity < 0)
+        yVelocity = 0;
+    if (y + yVelocity > canvas.height - scaledHeight)
+        yVelocity = 0;
     if ((keysDown.has("w") || keysDown.has("s")) && (keysDown.has("a") || keysDown.has("d"))) {
-        xv /= Math.sqrt(2);
-        yv /= Math.sqrt(2);
+        xVelocity /= Math.sqrt(2);
+        yVelocity /= Math.sqrt(2);
     }
 }
 function step() {
@@ -121,14 +160,14 @@ function step() {
         return;
     }
     frameCount = 0;
-    if (Math.abs(xv) > 0 || Math.abs(yv) > 0) {
-        currentLoopIndex++;
-        if (currentLoopIndex >= cycleLoop.length) {
-            currentLoopIndex = 0;
+    if (Math.abs(xVelocity) > 0 || Math.abs(yVelocity) > 0) {
+        currentFrame++;
+        if (currentFrame >= 3) {
+            currentFrame = 0;
         }
     }
     else {
-        currentLoopIndex = 0;
+        currentFrame = 0;
     }
     window.requestAnimationFrame(step);
 }
@@ -140,12 +179,12 @@ function checkCollisions() {
                 const startingPositionY = canvas.height / 2 - collisionMap.length / 2 * 48;
                 let xDistance = Math.floor((x + width / 4) - (j * 48 + 24)) - startingPositionX + 48;
                 let yDistance = Math.floor((y + height / 4) - (i * 48 + 24)) - startingPositionY + 48;
-                let combinedHalfWidth = Math.floor(width / 4 + 48 / 2);
-                let combinedHalfHeight = Math.floor(height / 4 + 48 / 2);
-                if (Math.abs(xDistance) < combinedHalfWidth) {
-                    if (Math.abs(yDistance) < combinedHalfHeight) {
-                        let xOverlap = combinedHalfWidth - Math.abs(xDistance);
-                        let yOverlap = combinedHalfHeight - Math.abs(yDistance);
+                let combinedHalfwidth = Math.floor(width / 4 + 48 / 2);
+                let combinedHalfheight = Math.floor(height / 4 + 48 / 2);
+                if (Math.abs(xDistance) < combinedHalfwidth) {
+                    if (Math.abs(yDistance) < combinedHalfheight) {
+                        let xOverlap = combinedHalfwidth - Math.abs(xDistance);
+                        let yOverlap = combinedHalfheight - Math.abs(yDistance);
                         if (xOverlap >= yOverlap) {
                             y += yDistance > 0 ? yOverlap : -yOverlap;
                         }
@@ -162,39 +201,10 @@ function init() {
     setInterval(function () {
         updateSpeeds();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawFrame(cycleLoop[currentLoopIndex], row, x, y);
-        x += xv;
-        y += yv;
+        drawFrame(currentFrame, row, x, y);
+        x += xVelocity;
+        y += yVelocity;
         checkCollisions();
     }, 5);
     window.requestAnimationFrame(step);
-}
-/** Initializes a new Player object to be rendered on the player layer. */
-export class Player {
-    constructor() {
-        img = new Image();
-        img.src = "./assets/lucas.png";
-        img.onload = function () {
-            init();
-        };
-    }
-    getHeight() {
-        return height;
-    }
-    setCollisionMap(arr, code) {
-        let compressedMap = new Array();
-        for (let i = 0; i < arr.length; i++) {
-            let row = "";
-            for (let j = 0; j < arr[i].length; j++) {
-                if (allowedTiles.indexOf(code.get(arr[i].charAt(j))) == -1) {
-                    row += "1";
-                }
-                else {
-                    row += "0";
-                }
-            }
-            compressedMap.push(row);
-        }
-        collisionMap = compressedMap;
-    }
 }
