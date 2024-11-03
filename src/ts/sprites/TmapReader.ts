@@ -4,10 +4,10 @@ const fs = window.require("fs");
 
 export class TileMap {
     background: string;
-    key: Map<String, String>;
-    map: Map<String, Array<String>>;
+    key: Map<string, string>;
+    map: Map<string, Array<string>>;
     
-    constructor(background: string, key: Map<String, String>, map: Map<String, Array<String>>) {
+    constructor(background: string, key: Map<string, string>, map: Map<string, Array<string>>) {
         this.background = background;
         this.key = key;
         this.map = map;
@@ -123,8 +123,8 @@ export class TmapReader {
      * @param contents - The string of contents read in from a .tmap file.
      * @returns - The encoded grid of each layer of the map.
      */
-    scrapeMaps(contents: string): Map<String, Array<String>> {
-        let maps = new Map<String, Array<String>>();
+    scrapeMaps(contents: string): Map< string, Array< string>> {
+        let maps = new Map< string, Array< string>>();
 
         while (contents.indexOf("#{layer=") > -1) {
             contents = contents.substring(contents.indexOf("#{layer="));
@@ -144,12 +144,12 @@ export class TmapReader {
 
             if (contents.charAt(readInd + 1) != ":") {
                 console.error("Missing : in definition of map layer!");
-                return new Map<String, Array<String>>();
+                return new Map< string, Array< string>>();
             }
             readInd++;
 
             readInd = contents.indexOf("{");
-            let layerRows = new Array<String>();
+            let layerRows = new Array< string>();
             let row = "";
 
             let reading = false;
@@ -192,8 +192,8 @@ export class TmapReader {
         return new TileMap(background, key, map);
     }
 
-    load(map: TileMap, key: TileKey, tileKey: Map<String, Tile>) {
-        let arr: Array<String> = Array.from(map.map.keys());
+    load(map: TileMap, key: TileKey) {
+        let arr: Array< string> = Array.from(map.map.keys());
 
         for (let i = 0; i < arr.length; i++) {
             let layer: string = arr[i] as string;

@@ -161,7 +161,7 @@ export class TmapReader {
         let map = this.scrapeMaps(contents);
         return new TileMap(background, key, map);
     }
-    load(map, key, tileKey) {
+    load(map, key) {
         let arr = Array.from(map.map.keys());
         for (let i = 0; i < arr.length; i++) {
             let layer = arr[i];

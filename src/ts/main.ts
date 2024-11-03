@@ -23,5 +23,12 @@ let islandNames = [
 
 let islandKey: TileKey = new TileKey(spritemaps + "/island.png", islandNames)
 setTimeout(() => {
-    tmap.load(island, islandKey, islandKey.key);
-}, 2000);
+    tmap.load(island, islandKey);
+    player.setCollisionMap(
+        island.map.get("map")!, 
+        island.key
+    )
+
+    console.log(island.map);
+}, 1000);
+

@@ -9,7 +9,7 @@ const maps = assets + "/maps";
 // Creates a new player sprite.
 let player = new Player(32, 32, 3);
 let tmap = new TmapReader();
-let island = tmap.readFile(maps + "/island.tmap");
+let island = tmap.readFile(maps + "/square.tmap");
 let islandNames = [
     "island_top_left", "island_top", "island_top_right", "pond_top_left", "pond_top", "pond_top_right",
     "island_left", "island_middle", "island_right", "pond_left", "water", "pond_right",
@@ -18,5 +18,7 @@ let islandNames = [
 ];
 let islandKey = new TileKey(spritemaps + "/island.png", islandNames);
 setTimeout(() => {
-    tmap.load(island, islandKey, islandKey.key);
-}, 2000);
+    tmap.load(island, islandKey);
+    player.setCollisionMap(island.map.get("map"), island.key);
+    console.log(island.map);
+}, 1000);

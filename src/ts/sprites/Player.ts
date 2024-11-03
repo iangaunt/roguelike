@@ -181,7 +181,9 @@ function step() {
     frameCount++;
     updateSpeeds();
 
-    if (frameCount < 15) {
+    console.log(currentFrame);
+
+    if (frameCount < 12) {
         window.requestAnimationFrame(step);
         return;
     }
@@ -189,7 +191,7 @@ function step() {
 
     if (Math.abs(xVelocity) > 0 || Math.abs(yVelocity) > 0) {
         currentFrame++;
-        if (currentFrame >= 3) {
+        if (currentFrame > 3) {
             currentFrame = 0;
         }
     } else {

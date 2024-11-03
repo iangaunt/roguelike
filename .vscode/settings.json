@@ -9,6 +9,7 @@
 
         "node_modules": true,
         "**/*.css.map": true,
-        "**/*.css": true
+        "**/*.css": true,
+        "dist": true
     }
 }
